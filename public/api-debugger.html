@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Page Title</title>
+    
+    <link rel='stylesheet' href='main.css'>
+</head>
+<body>
+    <div class="request">
+        <h2>Request</h2>
+        <div>
+            <input type="text" id="request-url">
+            <select name="" id="request-method">
+                <option>CET</option>
+                <option>POST</option>
+                <option>PUT</option>
+                <option>DELETE</option>
+            </select>
+        </div>
+        <div>
+            <label for="request-header">Cabeçalhos</label>
+            <textarea id="request-header"></textarea>
+        </div>
+        <div>
+             <label for="request-body">Corpo</label>
+            <textarea id="request-body"></textarea>
+        </div>
+    </div>
+    <div class="response">
+        <h2>Responce</h2>
+    </div>
+    <!-- <div>
+        <input name="url">
+        <select name="method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>DELETE</option>
+        </select>
+        <textarea name="body"></textarea>
+        <button id="excecute">Executar</button>
+    </div>
+    <pre id="status-code">000</pre>
+    <pre id="status-text">nnnn</pre>
+    <pre id="response-headers">headers</pre>
+    <pre id="result">resultado aqui</pre>
+    <script>
+        const elUrl = document.querySelector('[name="url"]')
+        const elMethod = document.querySelector('[name="method"]')
+        const elBody = document.querySelector('[name="body"]')
+        const btExec = document.querySelector('#excecute')
+
+        const responseResult = document.querySelector('#result')
+        const responceStatusCode = document.querySelector('#status-code')
+        const responseStatusText = document.querySelector('#status-text')
+        const responseHeader = document.querySelector('#response-headers')
+
+        btExec.addEventListener('click',async ev => {
+            const request = await fetch (elUrl.value,{
+                method: elMethod.value,
+                body: elBody.value.trim() === '' ? undefined : elBody.value,
+            })
+            const response = await request.text()
+            status.innerHTML = request.status
+            responceStatusCode.innerHTML = request.statusText
+            responseHeader.innerHTML = JSON.stringify(request.headers)
+            responseResult.innerHTML = response
+        })
+    </script> -->
+</body>
+
+</html>
+
