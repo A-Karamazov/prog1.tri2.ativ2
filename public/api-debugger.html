@@ -7,12 +7,28 @@
     <title>Page Title</title>
     
     <link rel='stylesheet' href='main.css'>
+    <style>
+        * {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    > * {
+        flex-grow: 1;
+        border: 2px solid black
+    }
+}
+
+
+    </style>
 </head>
 <body>
     <div class="request">
         <h2>Request</h2>
         <div>
-            <input type="text" id="request-url">
+            <input type="text" id="request-url" placeholder="URI/URL">
             <select name="" id="request-method">
                 <option>CET</option>
                 <option>POST</option>
@@ -28,11 +44,28 @@
              <label for="request-body">Corpo</label>
             <textarea id="request-body"></textarea>
         </div>
+        <div>
+            <button>Enviar</button>
+        </div>
     </div>
+
     <div class="response">
-        <h2>Responce</h2>
+        <h2>Response</h2>
+        <div>
+            <span id="response-path">caminho</span>
+            <span id="response-status-text">status text</span>
+            <span id="response-status-code">###</span>
+        </div>
+        <div>
+            <label>Cabeçalhos</label>
+            <textarea id="response-header"></textarea>
+        </div>
+        <div>
+             <label>Corpo</label>
+            <textarea id="response-body"></textarea>
+        </div>
     </div>
-    <!-- <div>
+    <div>
         <input name="url">
         <select name="method">
             <option>GET</option>
@@ -48,29 +81,35 @@
     <pre id="response-headers">headers</pre>
     <pre id="result">resultado aqui</pre>
     <script>
-        const elUrl = document.querySelector('[name="url"]')
-        const elMethod = document.querySelector('[name="method"]')
-        const elBody = document.querySelector('[name="body"]')
-        const btExec = document.querySelector('#excecute')
+        // Elementos DOM para Request
+        const requestUrl = document.querySelector("#request-url")
+        const requestMethod = document.querySelector("#request-method")
+        const requestHeader = document.querySelector("#request-header")
+        const requestBody = document.querySelector("#request-body")
+        const btRequest = document.querySelector("#bt-request")
+        // Elementos DOM para Response
+        const responsePath = document.querySelector("#response-path")
+        const responseStatusText = document.querySelector("#response-status-text")
+        const responseStatusCode = document.querySelector("#response-status-code")
+        const responseHeader = document.querySelector("#response-header")
+        const responseBody = document.querySelector("#response-body")
 
-        const responseResult = document.querySelector('#result')
-        const responceStatusCode = document.querySelector('#status-code')
-        const responseStatusText = document.querySelector('#status-text')
-        const responseHeader = document.querySelector('#response-headers')
-
-        btExec.addEventListener('click',async ev => {
-            const request = await fetch (elUrl.value,{
-                method: elMethod.value,
-                body: elBody.value.trim() === '' ? undefined : elBody.value,
+        btRequest.addEventListener('click', async () => {
+            const response = await fetch(requestUrl.value, {
+                method: requestMethod.value, 
+                headers: requestHeader.value.trim() === '' ? undefined : JSON.parse(requestHeader.value),
+                body: requestBody.value.trim() === '' ? undefined : JSON.parse(requestBody.value),
             })
-            const response = await request.text()
-            status.innerHTML = request.status
-            responceStatusCode.innerHTML = request.statusText
-            responseHeader.innerHTML = JSON.stringify(request.headers)
-            responseResult.innerHTML = response
-        })
-    </script> -->
-</body>
 
+            responseStatusText.innerText = response.statusText
+            responseStatusCode.innerText = response.status
+            responseHeader.innerText = ''
+            responseBody.innerText = await response.text()
+            
+
+        })
+    </script>
+
+</body>
 </html>
 
