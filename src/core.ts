@@ -1,64 +1,79 @@
-import TodoList, { Item } from './core'
-const todolist = new TodoList('todolist.json')
 
-async function requestTest(req: Bun.BunRequest) {
-  return Response.json({
-    method: req.method,
-    time: new Date().toLocaleString('pt-BR'),
-    body: await req.body?.text(),
-  });
+// Lydia Hallie : Event Loop
+
+/**
+ * @todo
+ * known issues:
+ * - getItems needs to await loadListFromDisk()
+ */
+
+// class Item_ { 
+//   public title: string
+//   constructor(title: string) {
+//     this.title = title
+//   }
+// }
+
+class Item {
+  constructor(public title: string) { }
 }
 
-const server = Bun.serve({
-  port: 3000,
-  routes: {
-    '/api-debugger': (req) => new Response(Bun.file('./public/api-debugger.html')),
-    '/test': {
-      GET: requestTest,
-      POST: requestTest,
-      PUT: requestTest,
-      DELETE: requestTest,
-      PATCH: requestTest,
-      OPTIONS: requestTest,
-    },
-    '/todo': {
-        GET: async () => {
-            const items = await todolist.getItems()
-            return Response.json(items)
-        },
-        POST: async (req) => {
-            let data
+class TodoList {
+  private items: Promise<Item[]>
+  private filePath: string
 
-            try {
-                data = await req.body?.json()
-            } catch (e) {
-                return new Response('json inválido', { status: 400 })
-            }
+  constructor(filePath: string) {
+    this.filePath = filePath
+    this.items = this.readListFromDisk()
+  }
 
-            if (!data?.title)
-                return new Response('É preciso informar title', { status: 400 })
+  private async saveListToDisk() {
+    const file = Bun.file(this.filePath)
+    const data = JSON.stringify(await this.items)
+    await file.write(data)
+  }
 
-            try {
-                await todolist.addItem(new Item(data.title))
-            } catch (error) {
-                return new Response('Erro ao adicionar item', { status: 500 })
-            }
+  private async readListFromDisk() {
+    const file = Bun.file(this.filePath)
+    // const text = await file.text()
+    // const data = JSON.parse(text)
+    const data = await file.json()
+    const items: Item[] = data.map((v: any) => {
+      return new Item(v.title)
+    })
+    return items
+  }
 
-            return new Response('Created', { status: 201 })
-        }
-    },
-    '/todo/:index': async (req) => {
-        const indexStr = req.params.index
-        const index = parseInt(indexStr)
-        if (isNaN(index)) 
-            return new Response('index precisa ser um número inteiro', { status: 400 })
-        await todolist.removeItem(index)
-        return new Response(`Item de indice ${index}, removido com sucesso`)
-    } 
-  },
-  fetch(req) {
-    return new Response("Not Found", { status: 404 });
-  },
-});
+  /**
+   * Adiciona um novo item na lista de item
+   */
+  async addItem(item: Item) {
+    const items = await this.items
+    if (!item) 
+      throw 'item não pode ser nulo ou indefinido'
+    if (!item.title || !item.title.trim()) 
+      throw 'item.title não pode ser nulo ou indefinido'
+    items.push(item)
+    await this.saveListToDisk()
+  }
 
-console.log(`Server running at http://localhost:${server.port}`);
+  /**
+   * Remove um item da lista de item pelo indice
+   */
+  async removeItem(index: number) {
+    const items = await this.items
+    items.splice(index, 1)
+    await this.saveListToDisk()
+  }
+
+  /**
+   * Retona uma cópia da lista de itens
+   */
+  async getItems() {
+    const items = await this.items
+    return Array.from(items)
+  }
+}
+
+export default TodoList
+export { Item, TodoList }
