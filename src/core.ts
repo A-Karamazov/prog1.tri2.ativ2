@@ -1,19 +1,4 @@
 
-// Lydia Hallie : Event Loop
-
-/**
- * @todo
- * known issues:
- * - getItems needs to await loadListFromDisk()
- */
-
-// class Item_ { 
-//   public title: string
-//   constructor(title: string) {
-//     this.title = title
-//   }
-// }
-
 class Item {
   constructor(public title: string) { }
 }
@@ -35,8 +20,6 @@ class TodoList {
 
   private async readListFromDisk() {
     const file = Bun.file(this.filePath)
-    // const text = await file.text()
-    // const data = JSON.parse(text)
     const data = await file.json()
     const items: Item[] = data.map((v: any) => {
       return new Item(v.title)
