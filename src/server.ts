@@ -34,10 +34,8 @@ const server = Bun.serve({
             } catch (e) {
                 return new Response('json inválido', { status: 400 })
             }
-
             if (!data?.title)
                 return new Response('É preciso informar title', { status: 400 })
-
             try {
                 await todolist.addItem(new Item(data.title))
             } catch (error) {
