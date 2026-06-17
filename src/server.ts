@@ -12,24 +12,14 @@ async function requestTest(req: Bun.BunRequest) {
 const server = Bun.serve({
   port: 3000,
   routes: {
+    '/' : () => new Response(Bun.file('./public/index.html')),
     '/api-debugger': (req) => new Response(Bun.file('./public/api-debugger.html')),
-
-    '/test': {
-      GET: requestTest,
-      POST: requestTest,
-      PUT: requestTest,
-      DELETE: requestTest,
-      PATCH: requestTest,
-      OPTIONS: requestTest,
-    },
-
+    '/test': requestTest,
     '/todo': {
-        // Lista todos os itens da TodoList em formato JSON
         GET: async () => {
             const items = await todolist.getItems()
             return Response.json(items)
         },
-        // Cria um novo item a partir do corpo da requisição
         POST: async (req) => {
             let data
 
@@ -52,6 +42,10 @@ const server = Bun.serve({
 
     // Deleta um item da lista de tarefas pelo índice, passado como parâmetro na URL
     '/todo/:index': async (req) => {
+        GET: () => {
+            return new Response(`Not implemented yet`, { status: 501 })
+        }
+
         const indexStr = req.params.index
         const index = parseInt(indexStr)
         if (isNaN(index)) 

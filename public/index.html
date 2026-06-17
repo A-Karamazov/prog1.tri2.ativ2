@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang=pt-BR'>
+<head>
+    <meta charset='utf-8'>
+    <title>To-do</title>
+    <script type="module">
+        const form = document.querySelector('#add')
+
+        function createElementItem(elIndex, elTitle) {
+            const clone = itemTemplate.content.cloneNode(true)
+            const title = clone.querySelector('span')
+            const delButton = clone.querySelector('button')
+            title.innerText = elTitle
+            delButton.dataset.id = elIndex   //brecha pra hackearem, neguinhos!!! :O c=8
+            itemTemplate.parentElement.append(clone)
+        }
+
+        void async function () {
+            const response = await fetch('/todo')
+            const items = await response.json()
+            items.forEach((item, index) => createElementItem(index, item.title))
+            console.log(items)
+        } ();
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault()
+            form.fieldset.setAttribute('disabled', true)
+            const title = form.value
+            if (title.trim === '') 
+                return
+            const response = await fetch('/todo', {
+                method: "POST",
+                headers: { "content-type": "application/json" }, 
+                body: JSON.stringify({ title })
+            })
+            const item = await response.json()
+            console.log(items)
+            createElementItem(-1, elTitle)
+            form.title.value = ''
+            form.fieldset.removeAttribute('disabled')
+        })
+    </script>
+</head>
+<body>
+    <form id="add">
+        <fieldset name="fieldset">
+        <input name="title">
+        <button name="btAdd">add</button>
+        </fieldset>
+    </form>
+    <ul>
+        <template id="itemTemplate">
+            <li>
+                <span>...</span>
+                <button>del</button>
+            </li>
+        </template>
+    </ul>
+</body>
+</html>
