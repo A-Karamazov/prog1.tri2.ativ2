@@ -48,6 +48,16 @@ class TodoList {
     const items = await this.items
     return Array.from(items)
   }
+
+  async updateItem(index: number, item : Item) {
+  const items = await this.items
+  if (index < 0 || index >= items.length)
+    throw 'índice inválido'
+  if (!item.title || !item.title.trim())
+    throw 'item.title não pode ser vazio'
+  items[index] = item
+  await this.saveListToDisk()
+}
 }
 
 export default TodoList

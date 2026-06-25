@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang=pt-BR'>
+
 <head>
     <meta charset='utf-8'>
     <title>To-do</title>
@@ -13,6 +14,17 @@
             title.innerText = elTitle
             delButton.dataset.id = elIndex   //brecha pra hackearem, neguinhos!!! :O c=8
             itemTemplate.parentElement.append(clone)
+            reloadList()
+        }
+
+        async function reloadList() {
+            const ul = document.querySelector('ul')
+            ul.querySelectorAll('li').forEach(li => li.remove())
+            const response = await fetch('/todo')
+            const items = await response.json()
+            items.forEach((item, index) => {
+                createElementItem(index, item.title)
+            })
         }
 
         void async function () {
@@ -20,17 +32,17 @@
             const items = await response.json()
             items.forEach((item, index) => createElementItem(index, item.title))
             console.log(items)
-        } ();
+        }();
 
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault()
             form.fieldset.setAttribute('disabled', true)
             const title = form.value
-            if (title.trim === '') 
+            if (title.trim === '')
                 return
             const response = await fetch('/todo', {
                 method: "POST",
-                headers: { "content-type": "application/json" }, 
+                headers: { "content-type": "application/json" },
                 body: JSON.stringify({ title })
             })
             const item = await response.json()
@@ -41,11 +53,12 @@
         })
     </script>
 </head>
+
 <body>
     <form id="add">
         <fieldset name="fieldset">
-        <input name="title">
-        <button name="btAdd">add</button>
+            <input name="title">
+            <button name="btAdd">add</button>
         </fieldset>
     </form>
     <ul>
@@ -57,4 +70,5 @@
         </template>
     </ul>
 </body>
+
 </html>
